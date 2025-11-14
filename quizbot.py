@@ -9,6 +9,7 @@ Created on Tue Jan 21 13:04:28 2025
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import os
 import asyncio
 import logging
 import signal
@@ -474,9 +475,10 @@ async def help(ctx):
     **Bot Commands:**
     
     1. **!help** - Displays this help message
-    2. **!f {phrase}** - Shows the verse/reference of all instances of that phrase occuring in the text
-    3. **!kw {1-3}** - Returns a random one, two, or three word key and its verse/reference. Leave blank for random
+    2. **!f {phrase}** - Shows the verse/reference of all instances of that phrase occuring in the text.
+    3. **!kw {book} {chapter}** - Returns a random one, two, or three word key and its verse/reference. Can be filtered by chapter (eg. 1-4, 3/5)
     4. **!ma** - Returns a random multiple answer question from the doc.
+    5. **!ftv** - Returns a random club 300 finish.
     '''
     
    await ctx.send(help_message)
@@ -489,7 +491,7 @@ async def on_message(message):
         await message.channel.send("pong!")
 
 material = []
-with open("discord-quizbot/corinthians.txt", "r", encoding="utf-8") as file:
+with open("home/yuxela/quizbot/corinthians.txt", "r", encoding="utf-8") as file:
     info = file.read()
 
 verse = info.splitlines()
