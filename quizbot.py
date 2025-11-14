@@ -8,6 +8,7 @@ Created on Tue Jan 21 13:04:28 2025
 
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 import asyncio
 import logging
 import signal
@@ -24,16 +25,20 @@ logging.basicConfig(level=logging.INFO)
 
 # Bot setup
 intents = discord.Intents.default()
+client = discord.Client(intents=intents)
 intents.message_content = True
 intents.members = True
 intents.messages = True
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 
-@bot.event
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
+
+@client.event
 async def on_ready():
     logging.info(f'Logged in as {bot.user}')
     
-@bot.event
+@client.event
 async def on_disconnect():
     await bot.http.session.close()
     
@@ -476,6 +481,13 @@ async def help(ctx):
     
    await ctx.send(help_message)
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    if message.content.lower() == "ping":
+        await message.channel.send("pong!")
+
 material = []
 with open("discord-quizbot/corinthians.txt", "r", encoding="utf-8") as file:
     info = file.read()
@@ -507,7 +519,7 @@ text = df["quote"].str.cat(sep=' ')
 
 # Run the bot
 async def main():
-    await bot.start("BOT_TOKEN")
+    await bot.start(TOKEN)
     
 # Handle shutdown signals  
 def shutdown_signal_handler(signal, frame):
